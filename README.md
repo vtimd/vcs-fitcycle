@@ -39,16 +39,16 @@ _Software required to use these templates:_ Ansible, Ansible EC2 dynamic invento
 
 1. Clone this repository to your local system.
 
-2. Create tf file by adding ".tf" to bigapp or smallapp depending on the deployment type
+2. Create a file named `terraform.tfvars` in the repository (don't worry, Git will ignore it) and populate it with values for the following variables:
 
-3. Create a file named `terraform.tfvars` in the repository (don't worry, Git will ignore it) and populate it with values for the following variables:
+    *akey (your AWS access key)
+    *skey (your AWS secret access key)
+    *awsregion (the AWS region to use; currently, only us-west-1 or us-east-1)
+    *keypair (the name of an AWS SSH keypair to inject into instances)
+    *vpcname (the name you'd like assigned to the new VPC)
+    *cidr (the network block _without_ subnet mask)
 
-    akey (your AWS access key)
-    skey (your AWS secret access key)
-    awsregion (the AWS region to use; currently, only us-west-1 or us-east-1)
-    keypair (the name of an AWS SSH keypair to inject into instances)
-    vpcname (the name you'd like assigned to the new VPC)
-    cidr (the network block _without_ subnet mask)
+3. Create tf file by adding ".tf" to bigapp or smallapp depending on the deployment type
 
 4. Run `terraform validate` to ensure there are no errors in the Terraform configuration. If any errors are reported, fix them before proceeding.
 

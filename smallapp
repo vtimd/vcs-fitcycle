@@ -109,6 +109,12 @@ resource "aws_security_group" "app_sec_group" {
         protocol    = "tcp"
         cidr_blocks = ["${var.cidr}/16"]
     }
+    ingress {
+        from_port   = 8000
+        to_port     = 8000
+        protocol    = "tcp"
+        cidr_blocks = ["${var.cidr}/16"]
+    }
     egress {
         from_port   = 0
         to_port     = 0
@@ -122,6 +128,12 @@ resource "aws_security_group" "api_sec_group" {
     ingress {
         from_port   = 22
         to_port     = 22
+        protocol    = "tcp"
+        cidr_blocks = ["${var.cidr}/16"]
+    }
+    ingress {
+        from_port   = 5000
+        to_port     = 5000
         protocol    = "tcp"
         cidr_blocks = ["${var.cidr}/16"]
     }
