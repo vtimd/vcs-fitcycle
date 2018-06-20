@@ -4,11 +4,11 @@ _Software required to use these templates:_ Ansible, Ansible EC2 dynamic invento
 
 ## Limitations
 
-*You'll need to ensure the correct AMIs are available in the region where you want to turn up the application. Currently the AMIs are available in us-west-1 and us-east-1 only.
+** You'll need to ensure the correct AMIs are available in the region where you want to turn up the application. Currently the AMIs are available in us-west-1 and us-east-1 only.
 
 ## AMI Information
 
-**us-east-1
+** us-east-1
 
     *api  - ami-db266ea4
     *app  - ami-1b3a7264
@@ -17,7 +17,7 @@ _Software required to use these templates:_ Ansible, Ansible EC2 dynamic invento
     *mgmt - ami-e531799a
     *webx - ami-b43971cd
 
-**us-west-1
+** us-west-1
 
     *api  - ami-2330d740
     *app  - ami-1630d775
@@ -26,7 +26,7 @@ _Software required to use these templates:_ Ansible, Ansible EC2 dynamic invento
     *mgmt - ami-1c33d47f
     *webx - ami-9635d2f5
 
-**us-west-2
+** us-west-2
 
     *api  - ami-d8357aa0
     *app  - ami-43347b3b
@@ -50,11 +50,13 @@ _Software required to use these templates:_ Ansible, Ansible EC2 dynamic invento
     vpcname (the name you'd like assigned to the new VPC)
     cidr (the network block _without_ subnet mask)
 
-3. Run `terraform validate` to ensure there are no errors in the Terraform configuration. If any errors are reported, fix them before proceeding.
+4. Run `terraform validate` to ensure there are no errors in the Terraform configuration. If any errors are reported, fix them before proceeding.
 
-4. Run `terraform plan` to evaluate the current infrastructure and prepare a plan for creating the desired configuration.
+5. Run `terraform plan` to evaluate the current infrastructure and prepare a plan for creating the desired configuration.
 
-5. Run `terraform apply` to create the desired infrastructure.
+6. Run `terraform apply` to create the desired infrastructure.
+
+** SKIP FOR NOW
 
 6. Few steps prior to configuring the new instances:
 
