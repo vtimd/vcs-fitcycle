@@ -39,7 +39,9 @@ _Software required to use these templates:_ Ansible, Ansible EC2 dynamic invento
 
 1. Clone this repository to your local system.
 
-2. Create a file named `terraform.tfvars` in the repository (don't worry, Git will ignore it) and populate it with values for the following variables:
+2. Create tf file by adding ".tf" to bigapp or smallapp depending on the deployment type
+
+3. Create a file named `terraform.tfvars` in the repository (don't worry, Git will ignore it) and populate it with values for the following variables:
 
     akey (your AWS access key)
     skey (your AWS secret access key)

@@ -67,7 +67,7 @@ resource "aws_security_group" "web_sec_group" {
         from_port   = 22
         to_port     = 22
         protocol    = "tcp"
-        cidr_blocks = [${var.cidr}/16]
+        cidr_blocks = "${var.cidr}/16"
     }
     ingress {
         from_port   = 443
