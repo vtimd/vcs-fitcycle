@@ -45,11 +45,45 @@ resource "aws_route_table_association" "public_subnet_us_west_1a_association" {
     subnet_id = "${aws_subnet.public_subnet_us_west_1a.id}"
     route_table_id = "${aws_vpc.vpc_tuto.main_route_table_id}"
 }
-resource "aws_security_group" "app_sec_group" {
-    name = "app_sec_group"
+resource "aws_security_group" "mgmt_sec_group" {
+    name = "mgmt_${var.vpcname}"
     ingress {
         from_port   = 22
         to_port     = 22
+        protocol    = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+    ingress {
+        from_port   = 24224
+        to_port     = 24224
+        protocol    = "tcp"
+        cidr_blocks = ["${var.cidr}/16"]
+    }
+    ingress {
+        from_port   = 2878
+        to_port     = 2878
+        protocol    = "tcp"
+        cidr_blocks = ["${var.cidr}/16"]
+    }
+    egress {
+        from_port   = 0
+        to_port     = 0
+        protocol    = "-1"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+    vpc_id = "${aws_vpc.vpc_tuto.id}"
+}
+resource "aws_security_group" "web_sec_group" {
+    name = "web_${var.vpcname}"
+    ingress {
+        from_port   = 22
+        to_port     = 22
+        protocol    = "tcp"
+        cidr_blocks = ["${var.cidr}/16"]
+    }
+    ingress {
+        from_port   = 443
+        to_port     = 443
         protocol    = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }
@@ -59,23 +93,59 @@ resource "aws_security_group" "app_sec_group" {
         protocol    = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
     }
-    ingress {
-        from_port   = 443
-        to_port     = 443
-        protocol    = "tcp"
+    egress {
+        from_port   = 0
+        to_port     = 0
+        protocol    = "-1"
         cidr_blocks = ["0.0.0.0/0"]
     }
+    vpc_id = "${aws_vpc.vpc_tuto.id}"
+}
+resource "aws_security_group" "app_sec_group" {
+    name = "app_${var.vpcname}"
     ingress {
-        from_port   = 8000
-        to_port     = 8000
+        from_port   = 22
+        to_port     = 22
         protocol    = "tcp"
+        cidr_blocks = ["${var.cidr}/16"]
+    }
+    egress {
+        from_port   = 0
+        to_port     = 0
+        protocol    = "-1"
         cidr_blocks = ["0.0.0.0/0"]
+    }
+    vpc_id = "${aws_vpc.vpc_tuto.id}"
+}
+resource "aws_security_group" "api_sec_group" {
+    name = "api_${var.vpcname}"
+    ingress {
+        from_port   = 22
+        to_port     = 22
+        protocol    = "tcp"
+        cidr_blocks = ["${var.cidr}/16"]
+    }
+    egress {
+        from_port   = 0
+        to_port     = 0
+        protocol    = "-1"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+    vpc_id = "${aws_vpc.vpc_tuto.id}"
+}
+resource "aws_security_group" "db_sec_group" {
+    name = "db_${var.vpcname}"
+    ingress {
+        from_port   = 22
+        to_port     = 22
+        protocol    = "tcp"
+        cidr_blocks = ["${var.cidr}/16"]
     }
     ingress {
         from_port   = 3306
         to_port     = 3306
         protocol    = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
+        cidr_blocks = ["${var.cidr}/16"]
     }
     egress {
         from_port   = 0
@@ -89,24 +159,12 @@ resource "aws_instance" "db1" {
   ami           = "${var.images["db"]}"
   instance_type = "t2.micro"
   subnet_id = "${aws_subnet.public_subnet_us_west_1a.id}"
-  vpc_security_group_ids = ["${aws_security_group.app_sec_group.id}"]
+  vpc_security_group_ids = ["${aws_security_group.db_sec_group.id}"]
   key_name                    = "${var.keypair}"
   tags {
         App = "${var.vpcname}"
         Name = "db1-${var.vpcname}"
         Tier = "DB"
-  }
-}
-resource "aws_instance" "dblb" {
-  ami           = "${var.images["dblb"]}"
-  instance_type = "t2.micro"
-  subnet_id = "${aws_subnet.public_subnet_us_west_1a.id}"
-  vpc_security_group_ids = ["${aws_security_group.app_sec_group.id}"]
-  key_name                    = "${var.keypair}"
-  tags {
-        App = "${var.vpcname}"
-        Name = "dblb-${var.vpcname}"
-        Tier = "DBLB"
   }
 }
 resource "aws_instance" "app1" {
@@ -121,27 +179,27 @@ resource "aws_instance" "app1" {
         Tier = "App"
   }
 }
-resource "aws_instance" "web1" {
+resource "aws_instance" "webx1" {
   ami           = "${var.images["web"]}"
   instance_type = "t2.micro"
   subnet_id = "${aws_subnet.public_subnet_us_west_1a.id}"
-  vpc_security_group_ids = ["${aws_security_group.app_sec_group.id}"]
+  vpc_security_group_ids = ["${aws_security_group.web_sec_group.id}"]
   key_name                    = "${var.keypair}"
   tags {
         App = "${var.vpcname}"
-        Name = "web1-${var.vpcname}"
+        Name = "webx1-${var.vpcname}"
         Tier = "Web"
   }
 }
-resource "aws_instance" "api" {
+resource "aws_instance" "api1" {
   ami           = "${var.images["api"]}"
   instance_type = "t2.micro"
   subnet_id = "${aws_subnet.public_subnet_us_west_1a.id}"
-  vpc_security_group_ids = ["${aws_security_group.app_sec_group.id}"]
+  vpc_security_group_ids = ["${aws_security_group.api_sec_group.id}"]
   key_name                    = "${var.keypair}"
   tags {
         App = "${var.vpcname}"
-        Name = "api-${var.vpcname}"
+        Name = "api1-${var.vpcname}"
         Tier = "API"
   }
 }
@@ -149,7 +207,7 @@ resource "aws_instance" "mgmt" {
   ami           = "${var.images["mgmt"]}"
   instance_type = "t2.medium"
   subnet_id = "${aws_subnet.public_subnet_us_west_1a.id}"
-  vpc_security_group_ids = ["${aws_security_group.app_sec_group.id}"]
+  vpc_security_group_ids = ["${aws_security_group.mgmt_sec_group.id}"]
   key_name                    = "${var.keypair}"
   tags {
         App = "${var.vpcname}"

@@ -199,7 +199,7 @@ resource "aws_instance" "app1" {
   key_name                    = "${var.keypair}"
   tags {
         App = "${var.vpcname}"
-        Name = "app1_${var.vpcname}"
+        Name = "app1-${var.vpcname}"
         Tier = "App"
   }
 }
