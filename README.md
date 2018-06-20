@@ -1,10 +1,39 @@
-# Templates for VMworld 2017 Demo App on AWS
+# Templates for VCS Fitcycle App for AWS
 
 _Software required to use these templates:_ Ansible, Ansible EC2 dynamic inventory script (included in repository), Terraform
 
 ## Limitations
 
-* You'll need to ensure the correct AMIs are available in the region where you want to turn up the application. Currently the AMIs are available in us-west-1 and us-east-1 only.
+*You'll need to ensure the correct AMIs are available in the region where you want to turn up the application. Currently the AMIs are available in us-west-1 and us-east-1 only.
+
+## AMI Information
+
+**us-east-1
+
+    *api  - ami-db266ea4
+    *app  - ami-1b3a7264
+    *db   - ami-b7256dc8
+    *dblb - ami-4c387033
+    *mgmt - ami-e531799a
+    *webx - ami-b43971cd
+
+**us-west-1
+
+    *api  - ami-2330d740
+    *app  - ami-1630d775
+    *db   - ami-0a3ed969
+    *dblb - ami-1830d77b
+    *mgmt - ami-1c33d47f
+    *webx - ami-9635d2f5
+
+**us-west-2
+
+    *api  - ami-d8357aa0
+    *app  - ami-43347b3b
+    *db   - ami-3e256a46
+    *dblb - ami-5436792c
+    *mgmt - ami-2339765b
+    *webx - ami-e438779c    
 
 ## Instructions for Use
 
@@ -48,12 +77,12 @@ _Software required to use these templates:_ Ansible, Ansible EC2 dynamic invento
           `sudo kill xxx`
           copy the ps line for haproxy from the output and use sudo to rerun it
           it should be something like: `sudo /usr/sbin/haproxy -f /etc/haproxy/haproxy.cfg -D -p /var/run/haproxy.pid`
-           
+
     * Restart Django on the App tier instances.
         * `sudo ps aux | grep manage` - note all the process ids - should be three
         * `sudo kill xxx xxx xxx `
         * in the ubuntu folder run `./startdjango.sh`
-        
+
     * Restart HAProxy on the DB Load Balancer instance. (`sudo service haproxy restart` works)
 
 You should be ready to go!
