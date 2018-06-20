@@ -50,6 +50,8 @@ _Software required to use these templates:_ Ansible, Ansible EC2 dynamic invento
 
 3. Create tf file by adding ".tf" to bigapp or smallapp depending on the deployment type
 
+4. Run `terraform init` to ensure there are no errors in the Terraform configuration. If any errors are reported, fix them before proceeding.
+
 4. Run `terraform validate` to ensure there are no errors in the Terraform configuration. If any errors are reported, fix them before proceeding.
 
 5. Run `terraform plan` to evaluate the current infrastructure and prepare a plan for creating the desired configuration.
