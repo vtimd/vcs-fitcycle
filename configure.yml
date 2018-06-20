@@ -33,8 +33,8 @@
   tasks:
     - name: "Render API templated Django settings file"
       template:
-        src: "templates/settings.py.j2"
-        dest: "/home/ubuntu/apiserver/apiserver/settings.py"
+        src: "templates/mysql.env.j2"
+        dest: "/home/ubuntu/api_server/mysql.env"
         owner: "ubuntu"
         group: "ubuntu"
         mode: 0644
