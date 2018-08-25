@@ -2,11 +2,18 @@
 variable "keypair" {}
 variable "vpcname" {}
 variable "cidr" {}
+variable "product" {}
+variable "team" {}
+variable "owner" {}
+variable "environment" {}
+variable "organization" {}
+variable "costcenter" {}
 variable "images" {
   type = "map"
   default = {
     web="ami-9635d2f5"
     mgmt="ami-1c33d47f"
+    dblb="ami-1830d77b"
     db="ami-0a3ed969"
     app="ami-1630d775"
     api="ami-2330d740"
@@ -19,6 +26,12 @@ resource "aws_vpc" "vcs_vpc" {
   enable_dns_hostnames = true
   tags = {
     Name = "${var.vpcname}"
+    Product = "${var.product}"
+    Team = "${var.team}"
+    Owner = "${var.owner}"
+    Environment = "${var.environment}"
+    Organization = "${var.organization}"
+    Cost Center = "${var.costcenter}"
   }
 }
 resource "aws_subnet" "public_subnet1" {
@@ -27,12 +40,24 @@ resource "aws_subnet" "public_subnet1" {
   map_public_ip_on_launch = true
   tags = {
     Name =  "Subnet1-${var.vpcname}"
+    Product = "${var.product}"
+    Team = "${var.team}"
+    Owner = "${var.owner}"
+    Environment = "${var.environment}"
+    Organization = "${var.organization}"
+    Cost Center = "${var.costcenter}"
   }
 }
 resource "aws_internet_gateway" "gw" {
   vpc_id = "${aws_vpc.vcs_vpc.id}"
   tags {
         Name = "IG-${var.vpcname}"
+        Product = "${var.product}"
+        Team = "${var.team}"
+        Owner = "${var.owner}"
+        Environment = "${var.environment}"
+        Organization = "${var.organization}"
+        Cost Center = "${var.costcenter}"
     }
 }
 resource "aws_route" "internet_access" {
@@ -70,6 +95,15 @@ resource "aws_security_group" "mgmt_sec_group" {
         protocol    = "-1"
         cidr_blocks = ["0.0.0.0/0"]
     }
+    tags {
+      Name = "mgmt_sec_group-${var.vpcname}"
+      Product = "${var.product}"
+      Team = "${var.team}"
+      Owner = "${var.owner}"
+      Environment = "${var.environment}"
+      Organization = "${var.organization}"
+      Cost Center = "${var.costcenter}"
+    }
     vpc_id = "${aws_vpc.vcs_vpc.id}"
 }
 resource "aws_security_group" "web_sec_group" {
@@ -98,6 +132,15 @@ resource "aws_security_group" "web_sec_group" {
         protocol    = "-1"
         cidr_blocks = ["0.0.0.0/0"]
     }
+    tags {
+      Name = "web_sec_group-${var.vpcname}"
+      Product = "${var.product}"
+      Team = "${var.team}"
+      Owner = "${var.owner}"
+      Environment = "${var.environment}"
+      Organization = "${var.organization}"
+      Cost Center = "${var.costcenter}"
+    }
     vpc_id = "${aws_vpc.vcs_vpc.id}"
 }
 resource "aws_security_group" "app_sec_group" {
@@ -119,6 +162,15 @@ resource "aws_security_group" "app_sec_group" {
         to_port     = 0
         protocol    = "-1"
         cidr_blocks = ["0.0.0.0/0"]
+    }
+    tags {
+      Name = "app_sec_group-${var.vpcname}"
+      Product = "${var.product}"
+      Team = "${var.team}"
+      Owner = "${var.owner}"
+      Environment = "${var.environment}"
+      Organization = "${var.organization}"
+      Cost Center = "${var.costcenter}"
     }
     vpc_id = "${aws_vpc.vcs_vpc.id}"
 }
@@ -142,6 +194,15 @@ resource "aws_security_group" "api_sec_group" {
         protocol    = "-1"
         cidr_blocks = ["0.0.0.0/0"]
     }
+    tags {
+      Name = "api_sec_group-${var.vpcname}"
+      Product = "${var.product}"
+      Team = "${var.team}"
+      Owner = "${var.owner}"
+      Environment = "${var.environment}"
+      Organization = "${var.organization}"
+      Cost Center = "${var.costcenter}"
+    }
     vpc_id = "${aws_vpc.vcs_vpc.id}"
 }
 resource "aws_security_group" "db_sec_group" {
@@ -164,11 +225,20 @@ resource "aws_security_group" "db_sec_group" {
         protocol    = "-1"
         cidr_blocks = ["0.0.0.0/0"]
     }
+    tags {
+      Name = "db_sec_group-${var.vpcname}"
+      Product = "${var.product}"
+      Team = "${var.team}"
+      Owner = "${var.owner}"
+      Environment = "${var.environment}"
+      Organization = "${var.organization}"
+      Cost Center = "${var.costcenter}"
+    }
     vpc_id = "${aws_vpc.vcs_vpc.id}"
 }
 resource "aws_instance" "db1" {
   ami           = "${var.images["db"]}"
-  instance_type = "t2.micro"
+  instance_type = "t3.micro"
   subnet_id = "${aws_subnet.public_subnet1.id}"
   vpc_security_group_ids = ["${aws_security_group.db_sec_group.id}"]
   key_name                    = "${var.keypair}"
@@ -176,11 +246,35 @@ resource "aws_instance" "db1" {
         App = "${var.vpcname}"
         Name = "db1-${var.vpcname}"
         Tier = "DB"
+        Product = "${var.product}"
+        Team = "${var.team}"
+        Owner = "${var.owner}"
+        Environment = "${var.environment}"
+        Organization = "${var.organization}"
+        Cost Center = "${var.costcenter}"
+  }
+}
+resource "aws_instance" "dblb" {
+  ami           = "${var.images["dblb"]}"
+  instance_type = "t3.micro"
+  subnet_id = "${aws_subnet.public_subnet1.id}"
+  vpc_security_group_ids = ["${aws_security_group.db_sec_group.id}"]
+  key_name                    = "${var.keypair}"
+  tags {
+        App = "${var.vpcname}"
+        Name = "dblb-${var.vpcname}"
+        Tier = "DBLB"
+        Product = "${var.product}"
+        Team = "${var.team}"
+        Owner = "${var.owner}"
+        Environment = "${var.environment}"
+        Organization = "${var.organization}"
+        Cost Center = "${var.costcenter}"
   }
 }
 resource "aws_instance" "app1" {
   ami           = "${var.images["app"]}"
-  instance_type = "t2.micro"
+  instance_type = "t3.micro"
   subnet_id = "${aws_subnet.public_subnet1.id}"
   vpc_security_group_ids = ["${aws_security_group.app_sec_group.id}"]
   key_name                    = "${var.keypair}"
@@ -188,11 +282,17 @@ resource "aws_instance" "app1" {
         App = "${var.vpcname}"
         Name = "app1-${var.vpcname}"
         Tier = "App"
+        Product = "${var.product}"
+        Team = "${var.team}"
+        Owner = "${var.owner}"
+        Environment = "${var.environment}"
+        Organization = "${var.organization}"
+        Cost Center = "${var.costcenter}"
   }
 }
 resource "aws_instance" "webx1" {
   ami           = "${var.images["web"]}"
-  instance_type = "t2.micro"
+  instance_type = "t3.micro"
   subnet_id = "${aws_subnet.public_subnet1.id}"
   vpc_security_group_ids = ["${aws_security_group.web_sec_group.id}"]
   key_name                    = "${var.keypair}"
@@ -200,11 +300,17 @@ resource "aws_instance" "webx1" {
         App = "${var.vpcname}"
         Name = "webx1-${var.vpcname}"
         Tier = "Web"
+        Product = "${var.product}"
+        Team = "${var.team}"
+        Owner = "${var.owner}"
+        Environment = "${var.environment}"
+        Organization = "${var.organization}"
+        Cost Center = "${var.costcenter}"
   }
 }
 resource "aws_instance" "api1" {
   ami           = "${var.images["api"]}"
-  instance_type = "t2.micro"
+  instance_type = "t3.micro"
   subnet_id = "${aws_subnet.public_subnet1.id}"
   vpc_security_group_ids = ["${aws_security_group.api_sec_group.id}"]
   key_name                    = "${var.keypair}"
@@ -212,11 +318,17 @@ resource "aws_instance" "api1" {
         App = "${var.vpcname}"
         Name = "api1-${var.vpcname}"
         Tier = "API"
+        Product = "${var.product}"
+        Team = "${var.team}"
+        Owner = "${var.owner}"
+        Environment = "${var.environment}"
+        Organization = "${var.organization}"
+        Cost Center = "${var.costcenter}"
   }
 }
 resource "aws_instance" "mgmt" {
   ami           = "${var.images["mgmt"]}"
-  instance_type = "t2.medium"
+  instance_type = "t3.medium"
   subnet_id = "${aws_subnet.public_subnet1.id}"
   vpc_security_group_ids = ["${aws_security_group.mgmt_sec_group.id}"]
   key_name                    = "${var.keypair}"
@@ -224,5 +336,11 @@ resource "aws_instance" "mgmt" {
         App = "${var.vpcname}"
         Name = "mgmt-${var.vpcname}"
         Tier = "Mgmt"
+        Product = "${var.product}"
+        Team = "${var.team}"
+        Owner = "${var.owner}"
+        Environment = "${var.environment}"
+        Organization = "${var.organization}"
+        Cost Center = "${var.costcenter}"
   }
 }
